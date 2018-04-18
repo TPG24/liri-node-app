@@ -1,11 +1,11 @@
+// require("dotenv/config");
 require("dotenv").config();
 
 var keys = require('./key.js');
 var request = require('request');
-var twitter = require('twitter');
-var client = new Twitter(keys.twitterKeys);
-var spotify = new Spotify(keys.spotify);
-// var spotify = require('node-spotify-api');
+const twitter = require('twitter');
+var client = new twitter(keys.twitterKeys);
+var spotify = require('node-spotify-api');
 var fs = require('fs');
 
 var nodeArgv = process.argv;
@@ -51,18 +51,18 @@ switch(command){
 }
 
 function showTweets(){
-    //Display last 20 Tweets
+
     var screenName = {screen_name: 'Randy_Johnson'};
     client.get('statuses/user_timeline', screenName, function(error, tweets, response){
         if(!error){
             for(var i = 0; i<tweets.length; i++){
                 var date = tweets[i].created_at;
-                console.log("@PeteRandyJones: " + tweets[i].text + " Created At: " + date.substring(0, 19));
+                console.log("@PeteRandyJones: " + tweets[i].text + " Created At: " + date.substring(0, 4));
                 console.log("-----------------------");
 
-                //adds text to log.txt file
-                fs.appendFile('log.txt', "@PeteRandyJones: " + tweets[i].text + " Created At: " + date.substring(0, 19));
-                fs.appendFile('log.txt', "-----------------------");
+                // //adds text to log.txt file
+                // fs.appendFile('log.txt', "@PeteRandyJones: " + tweets[i].text + " Created At: " + date.substring(0, 4));
+                // fs.appendFile('log.txt', "-----------------------");
             }
         }else{
             console.log('Error occurred');
@@ -73,8 +73,8 @@ function showTweets(){
 function spotifySong(song){
     spotify.search({ type: 'track', query: song}, function(error, data){
         if(!error){
-            for(var i = 0; i < data.tracks.items.length; i++){
-                var songData = data.tracks.items[i];
+            for(var i = 0; i < data.track.items.length; i++){
+                var songData = data.track.items[i];
                 //artist
                 console.log("Artist: " + songData.artists[0].name);
                 //song name
@@ -85,12 +85,12 @@ function spotifySong(song){
                 console.log("Album: " + songData.album.name);
                 console.log("-----------------------");
 
-                //adds text to log.txt
-                fs.appendFile('log.txt', songData.artists[0].name);
-                fs.appendFile('log.txt', songData.name);
-                fs.appendFile('log.txt', songData.preview_url);
-                fs.appendFile('log.txt', songData.album.name);
-                fs.appendFile('log.txt', "-----------------------");
+                // //adds text to log.txt
+                // fs.appendFile('log.txt', songData.artists[0].name);
+                // fs.appendFile('log.txt', songData.name);
+                // fs.appendFile('log.txt', songData.preview_url);
+                // fs.appendFile('log.txt', songData.album.name);
+                // fs.appendFile('log.txt', "-----------------------");
             }
         } else{
             console.log('Error occurred.');
@@ -99,7 +99,8 @@ function spotifySong(song){
 }
 
 function omdbData(movie){
-    var omdbURL = 'http://www.omdbapi.com/?t=' + movie + '&plot=short&tomatoes=true';
+    var omdbURL = 'http://www.omdbapi.com/?t=' + movie + '&plot=short&tomatoes=true&apikey=trilogy';
+    // "https://www.omdbapi.com/?t=romancing+the+stone&y=&plot=short&apikey=trilogy"
 
     request(omdbURL, function (error, response, body){
         if(!error && response.statusCode == 200){
@@ -115,16 +116,16 @@ function omdbData(movie){
             console.log("Rotten Tomatoes Rating: " + body.tomatoRating);
             console.log("Rotten Tomatoes URL: " + body.tomatoURL);
 
-            //adds text to log.txt
-            fs.appendFile('log.txt', "Title: " + body.Title);
-            fs.appendFile('log.txt', "Release Year: " + body.Year);
-            fs.appendFile('log.txt', "IMdB Rating: " + body.imdbRating);
-            fs.appendFile('log.txt', "Country: " + body.Country);
-            fs.appendFile('log.txt', "Language: " + body.Language);
-            fs.appendFile('log.txt', "Plot: " + body.Plot);
-            fs.appendFile('log.txt', "Actors: " + body.Actors);
-            fs.appendFile('log.txt', "Rotten Tomatoes Rating: " + body.tomatoRating);
-            fs.appendFile('log.txt', "Rotten Tomatoes URL: " + body.tomatoURL);
+            // //adds text to log.txt
+            // fs.appendFile('log.txt', "Title: " + body.Title);
+            // fs.appendFile('log.txt', "Release Year: " + body.Year);
+            // fs.appendFile('log.txt', "IMdB Rating: " + body.imdbRating);
+            // fs.appendFile('log.txt', "Country: " + body.Country);
+            // fs.appendFile('log.txt', "Language: " + body.Language);
+            // fs.appendFile('log.txt', "Plot: " + body.Plot);
+            // fs.appendFile('log.txt', "Actors: " + body.Actors);
+            // fs.appendFile('log.txt', "Rotten Tomatoes Rating: " + body.tomatoRating);
+            // fs.appendFile('log.txt', "Rotten Tomatoes URL: " + body.tomatoURL);
 
         } else{
             console.log('Error occurred.')
@@ -134,10 +135,10 @@ function omdbData(movie){
             console.log("If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
             console.log("It's on Netflix!");
 
-            //adds text to log.txt
-            fs.appendFile('log.txt', "-----------------------");
-            fs.appendFile('log.txt', "If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
-            fs.appendFile('log.txt', "It's on Netflix!");
+        //     //adds text to log.txt
+        //     fs.appendFile('log.txt', "-----------------------");
+        //     fs.appendFile('log.txt', "If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
+        //     fs.appendFile('log.txt', "It's on Netflix!");
         }
     });
 
