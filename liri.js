@@ -3,10 +3,12 @@ require("dotenv").config();
 
 var keys = require('./key.js');
 var request = require('request');
-const twitter = require('twitter');
-var client = new twitter(keys.twitterKeys);
-var spotify = require('node-spotify-api');
+var twitter = require('twitter');
+var client = new twitter(keys.twitter);
+var Spotify = require('node-spotify-api');
 var fs = require('fs');
+var spotify = new Spotify(keys.spotify);
+
 
 var nodeArgv = process.argv;
 var command = process.argv[2];
@@ -52,7 +54,7 @@ switch(command){
 
 function showTweets(){
 
-    var screenName = {screen_name: 'Randy_Johnson'};
+    var screenName = {screen_name: 'PeteRandyJones'};
     client.get('statuses/user_timeline', screenName, function(error, tweets, response){
         if(!error){
             for(var i = 0; i<tweets.length; i++){
@@ -71,10 +73,13 @@ function showTweets(){
 }
 
 function spotifySong(song){
-    spotify.search({ type: 'track', query: song}, function(error, data){
-        if(!error){
-            for(var i = 0; i < data.track.items.length; i++){
-                var songData = data.track.items[i];
+    spotify.search({ type: 'track', query: song, limit: 1}, function(error, data){
+        if (error) {
+            console.log(error);
+        }
+        // console.log(data.tracks.items);
+            for(var i = 0; i < data.tracks.items.length; i++) {
+                var songData = data.tracks.items[i];
                 //artist
                 console.log("Artist: " + songData.artists[0].name);
                 //song name
@@ -92,9 +97,6 @@ function spotifySong(song){
                 // fs.appendFile('log.txt', songData.album.name);
                 // fs.appendFile('log.txt', "-----------------------");
             }
-        } else{
-            console.log('Error occurred.');
-        }
     });
 }
 
